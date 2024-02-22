@@ -19,7 +19,27 @@ class UsersController < ApplicationController
         end
     end
 
+    def update
+        user = User.find(session[:user_id])
+        if user.update(user_params)
+            render json: user, status: :ok
+        else
+            render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+        end
+    end
+
+    def delete
+        user = User.find(session[:user_id])
+        if user.destroy
+            session[:user_id] = nil
+            render json: user, status: :ok
+        else
+            render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+        end
+    end
+
     private
+
     def user_params
         params.permit(
             :first_name, 
