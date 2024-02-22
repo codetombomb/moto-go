@@ -1,10 +1,11 @@
 class VehiclesController < ApplicationController
+    before_action :set_vehicle, only: [:destroy, :show, :update]
     def index
        render json: Vehicle.all
     end
 
     def show
-        render json: Vehicle.find(params[:id])
+        render json: @vehicle
     end
 
     def create
@@ -13,19 +14,20 @@ class VehiclesController < ApplicationController
     end
 
     def update
-        vehicle = Vehicle.find(params[:id])
-        vehicle.update!(vehicle_params)
-        render json: vehicle, status: :ok
+        @vehicle.update!(vehicle_params)
+        render json: @vehicle, status: :ok
     end
 
     def destroy
-        vehicle = Vehicle.find(params[:id])
-        debugger
-        vehicle.destroy
-        render json: {}, status: :ok
+        @vehicle.destroy
+        head :no_content
     end
 
     private
+
+    def set_vehicle
+        @vehicle = Vehicle.find(params[:id])
+    end
 
     def vehicle_params
         params.require(:vehicle).permit(:make, :model, :year, :miles, :user_id)

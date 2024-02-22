@@ -1,12 +1,12 @@
 class UsersController < ApplicationController
     skip_before_action :authorize, only: :create
+    
     def get
         render json: User.all
     end
 
     def show
-        user = User.find(session[:user_id])
-        render json: user
+        render json: @current_user
     end
 
     def create
@@ -20,21 +20,19 @@ class UsersController < ApplicationController
     end
 
     def update
-        user = User.find(session[:user_id])
-        if user.update(user_params)
-            render json: user, status: :ok
+        if @current_user.update(user_params)
+            render json: @current_user, status: :ok
         else
-            render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+            render json: { errors: @current_user.errors.full_messages }, status: :unprocessable_entity
         end
     end
 
     def delete
-        user = User.find(session[:user_id])
-        if user.destroy
+        if @current_user.destroy
             session[:user_id] = nil
-            render json: user, status: :ok
+            head :no_content
         else
-            render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+            render json: { errors: @current_user.errors.full_messages }, status: :unprocessable_entity
         end
     end
 

@@ -30,6 +30,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_09_190040) do
   create_table "rental_transactions", force: :cascade do |t|
     t.float "total"
     t.bigint "rental_id"
+    t.datetime "pick_up_date"
+    t.datetime "return_date"
+    t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
