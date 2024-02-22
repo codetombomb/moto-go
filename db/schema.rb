@@ -36,7 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_09_190040) do
 
   create_table "rentals", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "vehicle_id"
+    t.bigint "vehicle_id", null: false
     t.integer "cost_per_day"
     t.datetime "start_date"
     t.datetime "end_date"
@@ -69,4 +69,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_09_190040) do
 
   add_foreign_key "locations", "users"
   add_foreign_key "rentals", "users"
+  add_foreign_key "rentals", "vehicles"
 end

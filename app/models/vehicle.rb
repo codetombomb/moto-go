@@ -1,6 +1,7 @@
 class Vehicle < ApplicationRecord
-    belongs_to :owner, class_name: "User", foreign_key: 'user_id'
-    has_many :rentals
+    belongs_to :user, dependent: :destroy
+    has_many :rentals, dependent: :destroy
     has_many :renters, through: :rentals, source: :user
     has_many :rental_transactions, through: :rentals
+    alias_attribute :owner, :user
 end
