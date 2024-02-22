@@ -18,6 +18,14 @@ module MotoGoApi
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    
+    # Adding back cookies and session middleware
+	  config.middleware.use ActionDispatch::Cookies
+	  config.middleware.use ActionDispatch::Session::CookieStore
+	
+	  # Use SameSite=Strict for all cookies to help protect against CSRF
+		# This will include a cookie for requests that originate from the same origin - '/items' and not 'http://localhost:3000/items'
+	  config.action_dispatch.cookies_same_site_protection = :strict
 
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
