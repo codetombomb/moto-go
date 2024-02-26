@@ -15,6 +15,7 @@ module MotoGoApi
     #
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
+    ActiveModelSerializers.config.default_includes = '**'
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
