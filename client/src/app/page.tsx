@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useEffect } from "react";
+import Navbar from "./components/Navbar";
+import Landing from "./components/LandingSection";
 
 export default function Home() {
   useEffect(() => {
@@ -13,5 +15,10 @@ export default function Home() {
     console.log(posts);
   };
 
-  return <section>This is the Home page</section>;
+  return (
+    <>
+      <Navbar />
+      <Landing />
+    </>
+  );
 }
