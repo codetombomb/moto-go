@@ -1,18 +1,64 @@
-import { useState } from "react";
+import useDebounce from "@/app/hooks/useDebounce";
+import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+
+type Location = {
+  address_line_1: string;
+  address_line_2: string | null;
+  city: string;
+  country: string;
+  created_at: string;
+  id: number;
+  state_province: string;
+  updated_at: string;
+  user_id: number;
+  zip_postal_code: string | null;
+};
 
 function Landing() {
   const [cityInput, setCityInput] = useState<string>("");
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const debouncedSearchTerm = useDebounce<string>(cityInput, 500);
 
-  const handleCitySearch = async () => {
-    const resp = await fetch(`/locations/by-city/${cityInput}`);
-    const data = await resp.json();
-    console.log(data);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      handleCitySearch(debouncedSearchTerm);
+      setIsDropdownOpen(true);
+    } else {
+      setIsDropdownOpen(false);
+    }
+  }, [debouncedSearchTerm]);
+
+  const handleCitySearch = async (searchTerm: string) => {
+    if (cityInput) {
+      const resp = await fetch(`/locations/by-city/${cityInput}`);
+      const data = await resp.json();
+      setLocations(data);
+    }
   };
 
   return (
     <section>
       <section className="text-gray-400 body-font">
-        <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+        <div className="container mx-auto flex px-5 py-10 sm:py-24 md:flex-row flex-col items-center">
           <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-500">
               Rent. Ride. Explore.
@@ -28,23 +74,46 @@ function Landing() {
               Search by city to explore your possibilities!
             </span>
             <br />
-            <div className="flex justify-center flex-col">
-              <div className="relative mb-4">
+            <div className="flex justify-between flex-col w-full max-w-lg sm:flex-row">
+              <div className="relative min-w-72 w-full" ref={wrapperRef}>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  className="w-full bg-white rounded border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className="bg-white rounded border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out w-full my-5 sm:my-0"
                   value={cityInput}
                   onChange={(e) => setCityInput(e.target.value)}
                   placeholder="Enter your city"
+                  autoComplete="off"
                 />
+                {isDropdownOpen && (
+                  <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {locations.length > 0 ? (
+                      locations.map((location) => (
+                        <li
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          key={uuidv4()}
+                          onClick={() => {
+                            setCityInput(location.city);
+                            setIsDropdownOpen(false);
+                          }}
+                        >
+                          {location.city}, {location.state_province}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                        No results found
+                      </li>
+                    )}
+                  </ul>
+                )}
               </div>
               <button
-                className="inline-flex justify-center text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg"
-                onClick={handleCitySearch}
+                className="text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg sm:mx-5 text-nowrap h-11"
+                onClick={() => handleCitySearch(cityInput)}
               >
-                Search For Bikes!
+                Search Bikes!
               </button>
             </div>
           </div>
