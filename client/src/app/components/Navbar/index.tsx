@@ -14,7 +14,7 @@ function Navbar() {
           <a className="mr-5 hover:text-gray-700">Shop Gear</a>
           <a className="mr-5 hover:text-gray-700">About</a>
         </nav>
-        <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
+        <button className="text-gray-200 inline-flex items-center bg-gray-600 border-0 py-1 px-3 focus:outline-none hover:bg-green-400 hover:text-gray-700 rounded text-base mt-4 md:mt-0">
           Sign Up! &rarr;
         </button>
       </div>
