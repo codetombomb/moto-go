@@ -1,5 +1,6 @@
 import useDebounce from "@/app/hooks/useDebounce";
 import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 type Location = {
   address_line_1: string;
@@ -31,7 +32,11 @@ function Landing() {
         setIsDropdownOpen(false);
       }
     };
-  }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -70,7 +75,7 @@ function Landing() {
             </span>
             <br />
             <div className="flex justify-between flex-col w-full max-w-lg sm:flex-row">
-              <div className="relative min-w-72 w-full">
+              <div className="relative min-w-72 w-full" ref={wrapperRef}>
                 <input
                   type="text"
                   id="name"
@@ -79,7 +84,30 @@ function Landing() {
                   value={cityInput}
                   onChange={(e) => setCityInput(e.target.value)}
                   placeholder="Enter your city"
+                  autoComplete="off"
                 />
+                {isDropdownOpen && (
+                  <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {locations.length > 0 ? (
+                      locations.map((location) => (
+                        <li
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          key={uuidv4()}
+                          onClick={() => {
+                            setCityInput(location.city);
+                            setIsDropdownOpen(false);
+                          }}
+                        >
+                          {location.city}, {location.state_province}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                        No results found
+                      </li>
+                    )}
+                  </ul>
+                )}
               </div>
               <button
                 className="text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg sm:mx-5 text-nowrap h-11"
