@@ -1,10 +1,9 @@
 "use client";
 import Image from "next/image";
 import { useEffect } from "react";
-import Navbar from "./components/Navbar";
 import Landing from "./components/LandingSection";
 
-export default function Home() {
+const Home = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -17,8 +16,9 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
       <Landing />
     </>
   );
-}
+};
+
+export default Home;

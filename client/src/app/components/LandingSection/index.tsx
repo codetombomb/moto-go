@@ -15,7 +15,7 @@ type Location = {
   zip_postal_code: string | null;
 };
 
-function Landing() {
+const Landing = () => {
   const [cityInput, setCityInput] = useState<string>("");
   const [locations, setLocations] = useState<Location[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -128,6 +128,6 @@ function Landing() {
       </section>
     </section>
   );
-}
+};
 
 export default Landing;

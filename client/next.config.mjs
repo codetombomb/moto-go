@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async rewrites() {
+  env: {
+    backendURL: "http://localhost:3000/api",
+  },
+  rewrites: async () => {
     return [
       {
         source: "/:path*",
-        destination: "http://localhost:3000/:path*", // Proxy to Backend
+        destination: "http://localhost:3000/api/:path*", // Proxy to Backend
       },
     ];
   },
